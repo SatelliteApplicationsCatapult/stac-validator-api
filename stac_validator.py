@@ -1,6 +1,7 @@
-from validate import StacValidate
-from flask import Flask, request, jsonify
 import json
+
+from flask import Flask, request
+import pystac
 
 app = Flask(__name__)
 
@@ -8,14 +9,17 @@ app = Flask(__name__)
 @app.route("/", methods=["POST"])
 def validate():
     data = request.get_json()
-    json_data = json.loads(data)
-    stac = StacValidate(
-        json_input=json_data,
-    )
-    stac.run()
-    message = stac.message
-    return jsonify(message)
+    # json_data = json.loads(data)
+    try:
+        pystac.validation.validate_dict(data)
+        return "Valid STAC", 200
+    except Exception as e:
+        rtn = {
+            "message": str(e),
+            "error_type": str(type(e))
+        }
+        return rtn, 200
 
 
 if __name__ == "__main__":
-    app.run(debug=True, host="localhost", port=6789)
+    app.run(debug=True, host="localhost", port=7000)
