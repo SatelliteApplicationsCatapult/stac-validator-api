@@ -1,4 +1,5 @@
 import json
+from turtle import rt
 
 from flask import Flask, request
 import pystac
@@ -12,7 +13,10 @@ def validate():
     # json_data = json.loads(data)
     try:
         pystac.validation.validate_dict(data)
-        return "Valid STAC", 200
+        rtn = {
+            "message": "Valid STAC",
+        }
+        return rtn, 200
     except Exception as e:
         rtn = {
             "message": str(e),
